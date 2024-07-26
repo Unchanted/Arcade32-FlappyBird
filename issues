@@ -1,0 +1,28 @@
+1. explain
+2. demo
+3. issues/improvements
+
+topics
+- geom (bunny, pipes, background) 
+- positioning pipes, random # height
+random top height, subtract from whole scene height to get bottom height
+
+- animation bunny moving down, pipes moving left 
+- user interaction bunny jump
+
+~*~*~*~DEMO~*~*~*~
+
+issues
+- jumping while falling 
+- intersect bounding boxes 
+iterate through array of pipe sets, got top/bottom objects by name, created boxes for each of them
+
+- moving bounding boxes along with animation 
+
+- getting the score 
+calculated score by counting how many pipes passed (some math)
+- UNSOLVED ISSUE: stopping animation
+
+improvements for version 2, mostly aesthetic and UI things
+- smoother jumping 
+- harder level ideas 
