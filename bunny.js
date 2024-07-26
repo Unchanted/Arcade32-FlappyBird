@@ -1,12 +1,12 @@
 var bunnyParams = {
-	bodyRadius: 5,
+	bodyRadius: 10,
 	bodyScale: 1.2,
-	headRadius: 4,
+	headRadius: 8,
 	sphereDetail: 20,
-	appRadius: 1,
+	appRadius: 2,
 	appScale: 4,
-	tailRadius: 2,
-	furColor: new THREE.Color(0xCCCCCC),
+	tailRadius: 4,
+	furColor: new THREE.Color(0xF0F0F0),
 	texture: new THREE.ImageUtils.loadTexture( "/images/fur.jpg",
                                                      THREE.UVMapping,
                                                      // onload event handler
@@ -97,7 +97,8 @@ function buildEarSet() {
 	return ears;
 }
 
-/* rotates the feet to the proper orientation (long-side horizontally on x-axis) */
+/* rotates the feet to the proper orientation (long-side horizontally on x-axis) 
+ * returns a THREE.Object3D called feet containing the 2 feet */
 function buildFeetSet() {
 	var feet = new THREE.Object3D();
 	var footLeft = buildAppendage();
@@ -111,7 +112,8 @@ function buildFeetSet() {
 	return feet;
 }
 
-/* small cute sphere tail fur */
+/* small cute sphere tail fur 
+ * returns a THREE.Object3D */
 function buildTail() {
 	var tail = new THREE.Object3D();
 	var tailGeom = new THREE.SphereGeometry(bunnyParams.tailRadius,
@@ -121,3 +123,5 @@ function buildTail() {
 
     return tail;
 }
+
+
