@@ -1,22 +1,20 @@
-
-
 var params = {
 	fovy: 50,
 	cameraAdjustX: -200,
 	cameraAdjustY: 0,
-	sceneHeight: 250,
+	sceneHeight: 500,
 	sceneDepth: 10,
 
     bunnyStartOffset: -300,
-	pipeRadius: 15,
+	pipeRadius: 25,
 	pipeCylDetail: 20,
-	topPipeHeights: [40, 60, 50, 80, 20, 10, 30, 50],
+	topPipeHeights: [140, 160, 150, 80, 20, 10, 30, 50],
 	pipeColor: new THREE.Color(0x66FF66), // light green
 	pipeEndColor: new THREE.Color(0x47B247), // dark green
-	pipeEndRadius: 16,
+	pipeEndRadius: 26,
 	pipeEndHeight: 3,
-    pipeSpaceHeight: 90, // space between top and bottom pipes (vertical)
-	pipeOffsetX: 200, // space between pipe sets (horizontal)
+    pipeSpaceHeight: 120, // space between top and bottom pipes (vertical)
+	pipeOffsetX: 300, // space between pipe sets (horizontal)
 	numPipes: 5,
 
 	ambLightColor: 0x808080, // soft, light gray
@@ -28,8 +26,8 @@ var params = {
 
 	deltaT: 0.0035,
 	bunnyDeltaY: 2,
-	bunnyJumpY: 8,
-	pipesDeltaX: 0.5
+	bunnyJumpY: 40,
+	pipesDeltaX: 1
 };
 
 var scene = new THREE.Scene();
@@ -52,14 +50,14 @@ var canvasHeight = canvas.height;
 // creates a custom camera
 function myCamera(fovy, eye, at) {
 	var canvas = TW.lastClickTarget;
-	camera = new THREE.PerspectiveCamera( fovy, canvasWidth/canvasHeight, 1, 400);
+	camera = new THREE.PerspectiveCamera( fovy, canvasWidth/canvasHeight, 1, 600);
 	camera.position.copy(eye);
 	camera.lookAt(at);
 	scene.add(camera);
 }
 
 //adjust camera to display scene with bunny on far left and zoomed in view 
-var eye = new THREE.Vector3(params.cameraAdjustX, params.cameraAdjustY, 300);
+var eye = new THREE.Vector3(params.cameraAdjustX, params.cameraAdjustY, 500);
 var at = new THREE.Vector3(params.cameraAdjustX, params.cameraAdjustY, 0);
 myCamera(params.fovy, eye, at);
 render();
@@ -96,6 +94,7 @@ function buildScene(params, scene) {
 
 	bunny = awangatangBunny();
     bunny.position.x = params.bunnyStartOffset;
+    bunny.scale.set(2, 2, 2); // enlarge bunny
 	scene.add(bunny);
 
 	pipes = buildAllPipes(params.numPipes);
@@ -124,7 +123,7 @@ var animationState;
 function resetAnimationState() {
     animationState = {
         bunnyPosY: 0, // fall from initial height
-        pipePosX: 0,
+        pipePosX: params.pipeOffsetX,
         time: 0
     };
 }
@@ -140,7 +139,7 @@ function firstState() {
 
 function setBunnyPosition(time) {
 	// console.log(bunny.position.y);
-	var updatedPos = animationState.bunnyPosY - time*params.bunnyDeltaY;
+	var updatedPos = animationState.bunnyPosY - params.bunnyDeltaY;
 	bunny.position.y = updatedPos;
 	// console.log(bunny.position.y);
 	console.log("bunny moved");
@@ -148,7 +147,7 @@ function setBunnyPosition(time) {
 }
 
 function setPipesPosition(time) {
-	var updatedPos = animationState.pipePosX - time*params.pipesDeltaX;
+	var updatedPos = animationState.pipePosX - params.pipesDeltaX;
 	for(pipeIndex in pipes) {
 		console.log(pipes[pipeIndex].position.x);
 		pipes[pipeIndex].position.x = updatedPos + (pipeIndex)*params.pipeOffsetX;
@@ -157,12 +156,20 @@ function setPipesPosition(time) {
 	return updatedPos;
 }
 
+var jumping = false;
  
 function updateState() {
     // changes the time and everything in the state that depends on it
     animationState.time += params.deltaT;
     var time = animationState.time;
-    var bunnyPosY = setBunnyPosition(time);
+    if( !jumping) {
+    	var bunnyPosY = setBunnyPosition(time);
+    }
+    else {
+    	var bunnyPosY = animationState.bunnyPosY+ params.bunnyJumpY;
+    	bunny.position.y = bunnyPosY;
+    	jumping = false;
+    }
     var pipePosX = setPipesPosition(time);
     console.log("time is now "+time+" and bunny is at height "+bunnyPosY +"and pipes are at position" + pipePosX);
     animationState.bunnyPosY = bunnyPosY;
@@ -175,7 +182,7 @@ function oneStep() {
 }
     
  
-var animationId = null;                // so we can cancel the animation if we want
+var animationId = null;   // so we can cancel the animation if we want
  
 function animate(timestamp) {
     oneStep();
@@ -189,8 +196,11 @@ function stopAnimation() {
 }
 
 function oneJump() {
-	// bunny.position.y += params.bunnyJumpY;
-	animationState.bunnyPosY+= params.bunnyJumpY;
+	jumping = true;
+	// animationState.bunnyPosY+= params.bunnyJumpY;
+	// params.bunnyPosY = animationState.bunnyPosY;
+	// updateState();
+	// render();
 }
 
  
