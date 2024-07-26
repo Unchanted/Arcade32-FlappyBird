@@ -1,15 +1,15 @@
 var params = {
-	birdRadius: 5,
-	birdSphereDetail: 20,
-	birdPositionY: 5,
-	birdColor: new THREE.Color(0xFF7519),
+	// bunnyRadius: 5,
+	// bunnySphereDetail: 20,
+	// bunnyPositionY: 5,
+	// bunnyColor: new THREE.Color(0xFF7519),
 	pipeRadius: 5,
 	pipeCylDetail: 20,
 	topPipeHeights: [20, 30, 50, 10],
 	pipeColor: new THREE.Color(0x66FF66),
 	pipeEndColor: new THREE.Color(0x47B247),
 	pipeEndHeight: 3,
-	sceneHeight: 100,
+	sceneHeight: 150,
 	sceneWidth: 70,
 	sceneDepth: 10,
 	pipeOffsetX: 40,
@@ -22,30 +22,88 @@ var params = {
 
 var scene = new THREE.Scene();
 
-var renderer = new THREE.WebGLRenderer();
-
-TW.mainInit(renderer,scene);
 
 var sceneWidth = params.topPipeHeights.length*params.pipeOffsetX;
-console.log(params.topPipeHeights.length);
-TW.cameraSetup(renderer, scene,
-	{minx: 0, maxx: sceneWidth,
-	miny: -params.sceneHeight/2, maxy: params.sceneHeight/2,
-	minz: -params.sceneDepth, maxz: params.sceneDepth});
 
-
-/* builds bird  
-	texture map some wings or photo later*/
-function buildBird(params) {
-	var birdGeom = new THREE.SphereGeometry(params.birdRadius, 
-		params.birdSphereDetail, params.birdSphereDetail);
-	var birdMat = new THREE.MeshPhongMaterial( {color: params.birdColor,
-												ambient: params.birdColor,
-												specular: 0xFFFFFF,
-												shininess: 5} );
-	var birdMesh = new THREE.Mesh(birdGeom, birdMat);
-	return birdMesh;
+function myCamera(fovy,eye, at) {
+	// var canvas = document.getElementsByTagName("canvas")[0];
+	var canvas = TW.lastClickTarget;
+	camera = new THREE.PerspectiveCamera( fovy, 800/500, 1, 300);
+	camera.position.copy(eye);
+	// camera.up.copy(up);
+	camera.lookAt(at);
+	scene.add(camera);
 }
+var fovy = 70;
+// var eyeZ = Math.tan(fovy/2) * (params.sceneHeight);
+ var eye = new THREE.Vector3(0,0,250);
+ var at = new THREE.Vector3(0,0,0);
+ myCamera(fovy,eye, at);
+
+ var renderer = new THREE.WebGLRenderer();
+ function render() {
+    renderer.render(scene, camera);
+ }
+TW.mainInit(renderer,scene);
+render();
+
+// TW.cameraSetup(renderer, scene,
+// 	{minx: 0, maxx: sceneWidth,
+// 	miny: -params.sceneHeight/2, maxy: params.sceneHeight/2,
+// 	minz: -params.sceneDepth, maxz: params.sceneDepth});
+
+
+function loadBackground(params) {
+    var planeGeom = new THREE.PlaneGeometry(sceneWidth, params.sceneHeight);
+    var imageLoaded = false;
+    var backgroundTexture = new THREE.ImageUtils.loadTexture( "/images/background-orig.jpg",
+                                                         THREE.UVMapping,
+                                                         // onload event handler
+                                                         function () {
+                                                             console.log("image is loaded.");
+                                                             imageLoaded = true;
+                                                             render();
+                                                         });
+    var backgroundMat = new THREE.MeshBasicMaterial(
+        {color: THREE.ColorKeywords.white,
+         map: backgroundTexture});
+    
+    var backgroundMesh = new THREE.Mesh( planeGeom, backgroundMat );
+    backgroundMesh.position.x = sceneWidth/2;
+    backgroundMesh.position.z = -params.sceneDepth;
+    console.log(backgroundMesh);
+    return backgroundMesh;
+}
+
+
+/* builds bunny  
+	texture map some wings or photo later*/
+// function buildBunny(params) {
+	// var bunny = new THREE.Object3D();
+	// var bunnyGeom = new THREE.SphereGeometry(params.bunnyRadius, 
+	// 	params.bunnySphereDetail, params.bunnySphereDetail);
+	// var bunnyTexture = new THREE.ImageUtils.loadTexture( "/images/fur.jpg",
+ //                                                         THREE.UVMapping,
+ //                                                         // onload event handler
+ //                                                         function () {
+ //                                                             console.log("image is loaded.");
+ //                                                             imageLoaded = true;
+ //                                                             render();
+ //                                                         });
+	// var bunnyMat = new THREE.MeshPhongMaterial( {color: params.bunnyColor,
+	// 											ambient: params.bunnyColor,
+	// 											specular: 0xFFFFFF,
+	// 											shininess: 5,
+	// 											map: bunnyTexture} );
+	// var bunnyMesh = new THREE.Mesh(bunnyGeom, bunnyMat);
+
+	// var scale = 1.2;
+ //    bunnyMesh.scale.x = scale;
+
+	// return bunnyMesh;
+
+
+// }
 
 /* build one single pipe */
 function buildPipe(params, pipeHeight) { 
@@ -111,21 +169,24 @@ function buildAllPipes(params) {
 	for(pipeIndex in params.topPipeHeights) {
 		var pipeSet = buildPipeSet(params, pipeIndex);
 		pipeSet.position.x = ((++pipeIndex)*pipeOffsetX);
-		console.log(pipeSet);
+		// console.log(pipeSet);
 		pipeSets.push(pipeSet);
 		// pipeSets.push(buildPipeSet(params, pipeIndex));
 	}
 	return pipeSets;
 }
 
-/* build bird, all pipes, place on scene
+/* build bunny, all pipes, place on scene
 	add lights to the scene */
 function buildScene(params, scene) {
-	var bird = buildBird(params);
-	scene.add(bird);
+	var background = loadBackground(params);
+	scene.add(background);
+
+	var bunny = buildBunny();
+	scene.add(bunny);
 
 	var pipes = buildAllPipes(params);
-	console.log(pipes);
+	// console.log(pipes);
 	for(pipeIndex in params.topPipeHeights) {
 		scene.add(pipes[pipeIndex]);
 	} 
@@ -139,7 +200,8 @@ function buildScene(params, scene) {
                                    params.directionalY, 
                                    params.directionalZ ); 
     scene.add(directionalLight);
-	TW.render();
+	render();
 }	
 
 buildScene(params, scene);
+
