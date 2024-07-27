@@ -3,7 +3,7 @@
 3. issues/improvements
 
 topics
-- geom (bunny, pipes, background)
+- geom (bunny, pipes, background) 
 - positioning pipes, random # height
 random top height, subtract from whole scene height to get bottom height
 
@@ -12,26 +12,14 @@ random top height, subtract from whole scene height to get bottom height
 
 ~*~*~*~DEMO~*~*~*~
 
-issues
-- jumping while falling 
-- intersect bounding boxes 
-iterate through array of pipe sets, got top/bottom objects by name, created boxes for each of them
-
-- moving bounding boxes along with animation 
-
-- getting the score 
-calculated score by counting how many pipes passed 
-- UNSOLVED ISSUE: stopping animation
 
 improvements for version 2, mostly aesthetic and UI things
 - moar pipes
 - less space
-- moar 3D
-- smoother jumping 
-- harder level ideas 
+- web page w/ instructions & screenshots
 
-LEVEL 2 (keyboard callback '2')
-- STOP ANIMATION ERROR
-- fix text
-- bunny goes too far
-- bunny tilt
+- STOP ANIMATION ERRORS
+- add curves/surfaces (bunny ears?)
+
+extras:
+fog
