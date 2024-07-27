@@ -184,8 +184,7 @@ function resetAnimationState() {
         time: 0
     };
 }
-
-
+ 
 resetAnimationState();
 
 // reset game to initial position at level 1
@@ -291,7 +290,7 @@ function getScore() {
 }
 
 
-/ adds a text geometry of win status to the scene after winning or losing the game
+// adds a text geometry of win status to the scene after winning or losing the game
 function endText(win) {
 	//remove pipes
 	for(pipeIndex in pipes) {
@@ -380,3 +379,62 @@ function updateState() {
     	window.cancelAnimationFrame(requestAnimationFrame());
     }
 
+    var score = getScore();
+    // win, print "you win" text and end game
+    if(score == params.numPipes) {
+    	// when win, remove pipes from scene
+    	for(pipeIndex in pipes) {
+			scene.remove(pipes[pipeIndex]);
+		} 
+    	endText(true);
+    	window.cancelAnimationFrame(requestAnimationFrame());
+    }
+}
+                
+function oneStep() {
+    updateState();
+    render();
+}  
+ 
+var animationId = null;   // so we can cancel the animation if we want
+ 
+function animate(timestamp) {
+    oneStep();
+    animationId = requestAnimationFrame(animate);
+}
+ 
+function stopAnimation() {
+    if( animationId != null ) {
+        cancelAnimationFrame(animationId);
+    }
+}
+
+// when space bar is pressed, bunny jumping is set to true
+function oneJump() {
+	jumping = true;
+}
+
+// when 'a' key is pressed, bunny moves left/negative on the z-axis
+function zMoveLeft() {
+	if(bunny.position.z + params.bunnyDeltaZ > -100) {
+		bunny.position.z -= params.bunnyDeltaZ;
+		render();
+	}
+}
+
+// when 'd' key is pressed, bunny moves right/positive on the z-axis
+function zMoveRight() {
+	if(bunny.position.z + params.bunnyDeltaZ < 100) {
+		bunny.position.z += params.bunnyDeltaZ;
+		render();
+	}
+}
+
+TW.setKeyboardCallback("0",firstState,"reset animation");
+TW.setKeyboardCallback("1",oneStep,"advance by one step");
+TW.setKeyboardCallback("g",animate,"go:  start animation");
+TW.setKeyboardCallback("s",stopAnimation,"stop animation");
+TW.setKeyboardCallback("j",oneJump,"bunny jump");
+TW.setKeyboardCallback("2",level2,"change to level 2");
+TW.setKeyboardCallback("a",zMoveLeft,"move bunny left/negative on z axis");
+TW.setKeyboardCallback("d",zMoveRight,"move bunny right/positive on z axis");
