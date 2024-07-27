@@ -3,11 +3,11 @@
 3. issues/improvements
 
 topics
-- geom (bunny, pipes, background) 
+- geom (bunny, pipes, background)
 - positioning pipes, random # height
 random top height, subtract from whole scene height to get bottom height
 
-- animation bunny moving down, pipes moving left 
+- animation bunny moving down, pipes moving left
 - user interaction bunny jump
 
 ~*~*~*~DEMO~*~*~*~
@@ -20,6 +20,7 @@ improvements for version 2, mostly aesthetic and UI things
 
 - STOP ANIMATION ERRORS
 - add curves/surfaces (bunny ears?)
+
 
 extras:
 fog

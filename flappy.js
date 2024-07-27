@@ -26,7 +26,7 @@ var params = {
 
 	deltaT: 0.0035,
 	bunnyDeltaY: 2.3,
-	bunnyDeltaZ: 2,
+	bunnyDeltaZ: 5,
 	bunnyJumpY: 40,
 	bunnyTiltDown: TW.degrees2radians(-2),
 	bunnyTiltUp: TW.degrees2radians(30),
@@ -88,7 +88,7 @@ function changeView(level) {
 	 render();
  }
 
-var bunny, pipes;
+var bunny, pipes, plane1, plane2;
 // bounding boxes around bunny and pipes
 var bunnyBox; 
 var pipeBoxArray = new Array();
@@ -125,6 +125,13 @@ function buildScene(params, scene) {
 	for(pipeIndex in pipes) {
 		scene.add(pipes[pipeIndex]);
 	} 
+
+	plane1 = makePlane();
+	scene.add(plane1);
+
+	plane2 = makePlane();
+	scene.add(plane2);
+	plane2.rotation.y = Math.PI;
 
 	var ambLight = new THREE.AmbientLight(params.ambLightColor);
 	scene.add(ambLight);

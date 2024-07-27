@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <title>S Curve</title>
+    <style>      
+      canvas {
+
+          width: 80%;
+          height: 80%;
+      }
+    </style>
+    <script src="http://cs.wellesley.edu/~cs307/threejs/libs/three.min.js"></script>
+    <script src="http://cs.wellesley.edu/~cs307/threejs/libs/OrbitControls.js"></script>
+    <script src="http://cs.wellesley.edu/~cs307/threejs/libs/tw.js"></script>
+    <script src="http://cs.wellesley.edu/~cs307/threejs/libs/dat.gui.min.js"></script>
+    
+  </head>
+<body>
+
+<script id="prog">
+
+var renderer = new THREE.WebGLRenderer();
+var scene = new THREE.Scene(); 
+TW.mainInit(renderer,scene);
+TW.cameraSetup(renderer,scene, {minx:-100,maxx:100,miny:-100,maxy:100,minz:-100,maxz:100});
+
+TW.viewFromFront();        
+
+</script>
+<script src="plane.js"></script>
+</body>
+</html>
