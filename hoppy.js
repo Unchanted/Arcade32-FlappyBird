@@ -87,5 +87,100 @@ function myCamera(fovy, eye, at) {
 	scene.add(camera);
 }
 
+//adjust camera to display scene with bunny on far left and zoomed in view 
+var eye = new THREE.Vector3(params.cameraAdjustX, params.cameraAdjustY, 500);
+var at = new THREE.Vector3(params.cameraAdjustX, params.cameraAdjustY, 0);
+myCamera(params.fovy, eye, at);
+render();
 
+/* toggle camera for different levels. level 2 moves the camera to the far left */
+function changeView(level) {
+	 scene.remove(camera);
+	 if(level == 1) {
+	 	//set camera for level 1
+	 	var eye = new THREE.Vector3(params.cameraAdjustX,
+	 		params.cameraAdjustY, 500);
+	 	var at = new THREE.Vector3(params.cameraAdjustX, params.cameraAdjustY, 0);
+	 	myCamera(params.fovy, eye, at);
+	 } else if(level == 2) {
+	 	//set camera for level 2
+	 	var eye = new THREE.Vector3(params.cameraAdjustX-params.cameraAdjustX2,
+	 		params.cameraAdjustY, 500);
+	 	var at = new THREE.Vector3(params.cameraAdjustX, params.cameraAdjustY, 0);
+	 	myCamera(params.fovy, eye, at);
+	 }
+	 render();
+ }
 
+var bunny, pipes, plane1, plane2;
+// bounding boxes around bunny and pipes
+var bunnyBox; 
+var pipeBoxArray = new Array();
+
+var texture = THREE.ImageUtils.loadTexture( "images/cutecloud.jpg" );
+texture.wrapS = THREE.RepeatWrapping;
+texture.wrapT = THREE.RepeatWrapping;
+texture.repeat.set( 4, 4 );
+
+/* adds and positions background sphere, a bunny, all pipe sets, airplanes, and 
+	lights to the scene */
+function buildScene(params, scene) {
+	var sphereBackground = new THREE.Mesh(
+ 		new THREE.SphereGeometry(sceneWidth, 50, 50),
+  		new THREE.MeshBasicMaterial({
+    		map: texture
+  		})
+	);
+	sphereBackground.scale.x = -1;
+	scene.add(sphereBackground);
+
+	bunny = awangatangBunny();
+    bunny.position.x = params.bunnyStartOffset;
+    // enlarge bunny
+    bunny.scale.set(params.bunnyScale, params.bunnyScale, params.bunnyScale); 
+    bunny.name = "rabbit";
+	scene.add(bunny);
+	bunnyBox = new THREE.Box3();
+	bunnyBox.setFromObject(bunny);
+
+	pipes = buildAllPipes(params.numPipes);
+	for(pipeIndex in pipes) {
+		scene.add(pipes[pipeIndex]);
+	} 
+
+	plane1 = makePlane();
+	scene.add(plane1);
+	plane1.position.set(0, -200, -20);
+
+	plane2 = makePlane();
+	scene.add(plane2);
+	plane2.position.set(-300, 150, 40);
+	plane2.rotation.y = Math.PI;
+
+	var ambLight = new THREE.AmbientLight(params.ambLightColor);
+	scene.add(ambLight);
+
+	var directionalLight = new THREE.DirectionalLight(params.directionalLightColor,
+													  params.lightIntensity);
+    directionalLight.position.set( params.directionalX, 
+                                   params.directionalY, 
+                                   params.directionalZ ); 
+    scene.add(directionalLight);
+
+	render();
+}	
+
+buildScene(params, scene);
+
+// animation starts
+
+var onLevel2 = false;
+
+function resetAnimationState() {
+    animationState = {
+        bunnyPosY: 0, // fall from initial height
+        bunnyPosZ: 0,
+        pipePosX: params.pipeOffsetX,
+        time: 0
+    };
+}
