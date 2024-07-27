@@ -184,3 +184,109 @@ function resetAnimationState() {
         time: 0
     };
 }
+
+
+resetAnimationState();
+
+// reset game to initial position at level 1
+function firstState() {
+	//set camera to level 1 pos
+	onLevel2 = false;
+	changeView(1);
+    resetAnimationState();
+    scene.remove(scene.getObjectByName("endTextMesh"));
+    scene.remove(scene.getObjectByName("scoreText"));
+
+	//remove pipes
+	for(pipeIndex in pipes) {
+		scene.remove(pipes[pipeIndex]);
+	} 
+
+	//rebuild all pipe sets
+	pipes = buildAllPipes(params.numPipes);
+
+	for(pipeIndex in pipes) {
+		scene.add(pipes[pipeIndex]);
+	} 
+	// resets bunny's position and tilt
+	bunny.rotation.z = 0;
+    bunny.position.set(params.bunnyStartOffset,0,0);
+
+    // positions planes at arbitrary x, y, z values
+    plane1.position.set(0, -200, -20);
+    plane2.position.set(-300, 150, 40);
+
+    render();
+}
+
+// decreases bunny's y position
+function setBunnyPosition(time) {
+	var updatedPos = animationState.bunnyPosY - params.bunnyDeltaY;
+	bunny.position.y = updatedPos;
+	return updatedPos;
+}
+
+// decreases pipes' x position
+function setPipesPosition(time) {
+	var updatedPos = animationState.pipePosX - params.pipesDeltaX;
+	for(pipeIndex in pipes) {
+		pipes[pipeIndex].position.x = updatedPos + (pipeIndex)*params.pipeOffsetX;
+	} 
+	return updatedPos;
+}
+
+// changes game to level 2
+function level2() {
+	firstState();
+	onLevel2 = true;
+
+	//change camera view
+	changeView(2);
+
+	// rotate text
+	var endTextMesh = scene.getObjectByName("endTextMesh");
+	var scoreTextMesh = scene.getObjectByName("scoreText");
+
+	//remove pipes
+	for(pipeIndex in pipes) {
+		scene.remove(pipes[pipeIndex]);
+	} 
+
+	//rebuild all pipe sets
+	pipes = buildAllPipes(params.numPipes);
+
+	// values for the pipes' z positions
+	var min = -100;
+	var max = 100;
+
+	//setting random z position for each pipeset in pipes
+	for(pipeIndex in pipes) {
+		var randomZ = getRandomInt(min,max);
+		pipes[pipeIndex].position.z = randomZ;
+		scene.add(pipes[pipeIndex]);
+	} 
+}
+
+// returns number of pipes passed
+function getScore() {
+	var score = Math.ceil((animationState.pipePosX/params.pipeOffsetX))*-1;
+	// prints 0 for any no pipes passed
+    if(score<=0) {
+		score = 0;
+	}
+	// creates text geometry of score
+	var material = new THREE.MeshBasicMaterial({color: 0x000000});
+	var textGeom = new THREE.TextGeometry(score, 
+			{size: 50, height: 0, weight: "bold", font: 'audimat mono'});
+	var textMesh = new THREE.Mesh(textGeom, material);
+	textMesh.position.set(params.scorePosX, 100, params.pipeEndRadius*2); // in front of pipes
+	textMesh.name = "scoreText";
+	scene.remove(scene.getObjectByName("scoreText"));
+	// accounts for different camera perspective in level 2
+	if(onLevel2) {
+		textMesh.rotation.y = (-Math.PI/6);
+	}
+	scene.add(textMesh);
+	return score;
+}
+
