@@ -1,26 +1,3 @@
-/* 
-creates a 3D game of flappy bird, with a bunny instead of a bird 
-
-Dimensions of objects
-Whole scene: -520 to 520 on the x-axis, -250 to 250 on the y-axis
-Bunny: -[bodyRadius*bodyScale+tailRadius] to [bodyRadius*bodyScale+headRadius]
-		-16 to 20 on the x-axis
-
-		-[bodyRadius+appRadius] to [bodyRadius+headRadius+appRadius*appScale]
-		-12 to 26 on the y-axis
-
-		-[bodyRadius] to [bodyRadius]
-		-10 to 10 on the z-axis
-All pipe sets: [pipeOffsetX-pipeEndRadius] to [pipeOffsetX-pipeEndRadius]+[pipeOffsetX*number of pipes]
-			   114 to 634 on the x-axis
-
-			  -250 to 250 on the y-axis
-
-			  -[pipeEndRadius] to [pipeEndRadius]
-			  -16 to 16 on the z-axis
-
-*/
-
 var params = {
 	fovy: 50,
 	cameraAdjustX: -200,

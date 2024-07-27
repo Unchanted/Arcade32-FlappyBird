@@ -13,7 +13,7 @@ var params = {
 	pipeEndColor: new THREE.Color(0x246B24), // dark green
 	pipeEndRadius: 26,
 	pipeEndHeight: 7,
-    pipeSpaceHeight: 150, // space between top and bottom pipes (vertical)
+    pipeSpaceHeight: 300, // space between top and bottom pipes (vertical)
 	pipeOffsetX: 300, // space between pipe sets (horizontal)
 	numPipes: 7,
 
@@ -425,7 +425,7 @@ TW.setKeyboardCallback("0",firstState,"reset animation");
 TW.setKeyboardCallback("1",oneStep,"advance by one step");
 TW.setKeyboardCallback("g",animate,"go:  start animation");
 TW.setKeyboardCallback("s",stopAnimation,"stop animation");
-TW.setKeyboardCallback(" ",oneJump,"bunny jump");
+TW.setKeyboardCallback("j",oneJump,"bunny jump");
 // TW.setKeyboardCallback("v",changeView,"change camera");
 TW.setKeyboardCallback("2",level2,"change to level 2");
 TW.setKeyboardCallback("a",zMoveLeft,"move bunny left/negative on z axis");
