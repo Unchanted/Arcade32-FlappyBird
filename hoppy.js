@@ -290,3 +290,93 @@ function getScore() {
 	return score;
 }
 
+
+/ adds a text geometry of win status to the scene after winning or losing the game
+function endText(win) {
+	//remove pipes
+	for(pipeIndex in pipes) {
+		scene.remove(pipes[pipeIndex]);
+	} 
+	var textGeom;
+	var material = new THREE.MeshBasicMaterial({
+        color: 0xFFFFFF,
+    });
+
+	if(win) {
+		textGeom = new THREE.TextGeometry('YOU WIN, press 2 for level 2', 
+			{size: 20, height: 0, weight: "bold", 
+			font: 'bitstream vera sans mono'});
+	} else {
+		textGeom = new THREE.TextGeometry('GAME OVER, press 2 to try level 2', 
+			{size: 20, height: 0, weight: "bold", 
+			font: 'bitstream vera sans mono'});
+	}
+	var textMesh = new THREE.Mesh(textGeom, material);
+	textMesh.name = "endTextMesh"
+	textMesh.position.set(params.endTextPosX, -20, params.pipeEndRadius); // in front of pipes
+	// accounts for different camera perspective in level 2
+	if(onLevel2) {
+		textMesh.rotation.y = (-Math.PI/6);
+	}
+	scene.add(textMesh);
+	render();
+}
+
+// boolean tracking bunny movement
+var jumping = false;
+ 
+function updateState() {
+    // changes the time and everything in the state that depends on it
+    animationState.time += params.deltaT;
+    var time = animationState.time;
+
+    // moves the two planes forward at different speeds
+   	plane1.position.x -= params.plane1Delta;
+    plane2.position.x += params.plane2Delta;
+
+    // stops bunny from falling when it is jumping
+    // tilts bunny down when falling, up when jumping
+    if(!jumping) {
+    	var bunnyPosY = setBunnyPosition(time);
+    	if(bunny.rotation.z > params.tiltDownMax) {
+    		bunny.rotation.z += params.bunnyTiltDown;
+    	}
+    }
+    else {
+    	var bunnyPosY = animationState.bunnyPosY+ params.bunnyJumpY;
+    	bunny.position.y = bunnyPosY;
+    	if(bunny.rotation.z < params.tiltUpMax) {
+    		bunny.rotation.z += params.bunnyTiltUp;
+    	}
+    	jumping = false;
+    }
+    var pipePosX = setPipesPosition(time);
+    animationState.bunnyPosY = bunnyPosY;
+    animationState.pipePosX = pipePosX;
+
+    // moves bunny's box along with bunny
+    bunnyBox.setFromObject(bunny);
+
+    // moves pipes' bounding boxes along w/ pipes
+    for(var i = 0; i < pipes.length; i++) {
+    	var currentPipeSet = pipes[i];
+    	var topSeg = pipes[i].getObjectByName( "topSeg" );
+    	var bottomSeg = pipes[i].getObjectByName( "bottomSeg" );
+    	pipeBoxArray[i*2].setFromObject(topSeg);
+    	pipeBoxArray[(i*2)+1].setFromObject(bottomSeg);
+    }
+
+    // if bunny hits pipe, end game, print "game over" text
+    for(var i = 0; i < pipeBoxArray.length; i++) {
+    if (bunnyBox.isIntersectionBox(pipeBoxArray[i])) {
+    	endText(false);
+    	window.cancelAnimationFrame(requestAnimationFrame());
+    	}
+    }
+
+    // if bunny hits floor/ceiling, end game, print "game over" text
+    if(bunnyBox.min.y <= (-canvasHeight/2) || bunnyBox.min.y >= (canvasHeight/2)) {
+    	endText(false);
+    	window.cancelAnimationFrame(requestAnimationFrame());
+    }
+
